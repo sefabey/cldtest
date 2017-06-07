@@ -1,0 +1,47 @@
+---
+title: "cld Package TEsting"
+author: "Sefa Ozalp"
+date: "07/06/2017"
+output: html_notebook
+---
+
+# Quick Intro
+
+This is a simple test the accuracy of cld2 and cld3 packages. This is far from being a complete study but its a quick quality provided for Jeroen Ooms. 
+
+I'm using the most convenient dataset available for me: the one that's already loaded in my Global environment. 
+
+## The Dataset
+
+```{r}
+summary(Antisemitism$tweettextstr)
+```
+
+
+The Antisemitism dataset is used for training a ML classifier purposes. It is a subset of a larger dataset which was created by collecting data from Twitter's streaming API using some context specific keywords such as 'Jew' 'Zionist' etc over a long time period. In pre-processing, I used Twitter's integrated language identification to filter out only tweets in English. Later, the selection was annotated on CrowdFlower. So, I'm 100% sure that all of the 1390 tweets I'm using here are in English.
+
+## cld2 VS cld3:  The Comparison
+
+Startign with cld2:
+```{r}
+library(cld2)
+table(detect_language(Antisemitism$tweettextstr), useNA = 'ifany')
+```
+
+So, cld2 misses 19 out of 1390. I've eyeballed the tweet detected as Arabic; the tweet is in English (proper sentence with 10+ words) but contains only one hashtag in Arabic.
+
+Now off to test the cld3
+
+```{r}
+detach("package:cld2", unload=TRUE)
+library(cld3)
+table(detect_language(Antisemitism$tweettextstr), useNA = 'ifany')
+```
+
+
+## Results
+This is surprising. I was expecting a decrease in mis-identifications but its the opposite. Many NAs and many different languages. I really would like to see the precision of language detection to improve but I guess something is not right in the newest version of the package.
+
+
+
+Hope this helps.
